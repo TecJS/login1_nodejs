@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Reportes</title>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <%- include('template'); %>
+    <div class="container">
+        <!-- Encabezado -->
+        <h1 class="my-4">Lista de Reportes</h1>
+
+        <!-- Botón para crear nuevo tutor -->
+        <a href="/create" class="btn btn-outline-primary mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="transform: rotate(90deg);">
+                <path fill-rule="evenodd" d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H1a1 1 0 1 1 0-2h6V1a1 1 0 0 1 1-1z"/>
+            </svg> Crear Nuevo Tutor
+        </a>
+
+        <!-- Tabla de Tutores -->
+        <table class="table table-bordered table-striped text-center">
+          <thead class="bg-primary text-white">
+              <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">ID Tutor</th>
+                  <th scope="col">Tutor</th>
+                  <th scope="col">ID Alumno</th>
+                  <th scope="col">Alumno</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Reporte</th>
+                  <!-- Agregar más columnas según los datos adicionales -->
+                  <!-- Por ejemplo: <th scope="col">Dirección</th> -->
+              </tr>
+          </thead>
+          <tbody>
+              <% results.forEach((tutor) => { %>
+                  <tr>
+                      <td><%= tutor.id_reporte %></td>
+                      <td><%= tutor.id_tutor %></td>
+                      <td><%= tutor.nombre_tutor %> <%= tutor.apellido_P_tutor %> <%= tutor.apellido_M_tutor %></td>
+                      <td><%= tutor.id_alumno %></td>
+                      <td><%= tutor.nombre_alumno %> <%= tutor.apellido_P_alumno %> <%= tutor.apellido_M_alumno %></td>
+                      <td><%= tutor.fecha %></td>
+                      <td><%= tutor.reporte %></td>
+                      <!-- Agregar más celdas según los datos adicionales -->
+                      <!-- Por ejemplo: <td><%= tutor.direccion %></td> -->
+                  </tr>
+                  
+              <% }); %>
+          </tbody>
+      </table>
+    </div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

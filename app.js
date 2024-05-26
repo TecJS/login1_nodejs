@@ -41,89 +41,66 @@ const connection = require('./database/db');
 		res.render('register');
 	})
 
-//10 - Método para la REGISTRACIÓN
-app.post('/register', async (req, res)=>{
-	const user = req.body.user;
-	const name = req.body.name;
-    const rol = req.body.rol;
-	const pass = req.body.pass;
-	let passwordHash = await bcrypt.hash(pass, 8);
-    connection.query('INSERT INTO users SET ?',{user:user, name:name, rol:rol, pass:passwordHash}, async (error, results)=>{
-        if(error){
-            console.log(error);
-        }else{            
-			res.render('register', {
-				alert: true,
-				alertTitle: "Registration",
-				alertMessage: "¡Successful Registration!",
-				alertIcon:'success',
-				showConfirmButton: false,
-				timer: 1500,
-				ruta: ''
-			});
-            //res.redirect('/');         
-        }
-	});
-})
 
+// Método para la autenticación sin encriptado
+app.post('/auth', (req, res) => {
+    const user = req.body.user;
+    const pass = req.body.pass;
 
+    if (user && pass) {
+        connection.query('SELECT * FROM Usuarios WHERE codigo_usuario = ?', [user], (error, results, fields) => {
+            if (results.length == 0 || results[0].contrasena !== pass) {    
+                res.render('login', {
+                    alert: true,
+                    alertTitle: "Error",
+                    alertMessage: "USUARIO y/o PASSWORD incorrectas",
+                    alertIcon: 'error',
+                    showConfirmButton: true,
+                    timer: false,
+                    ruta: 'login'
+                });
 
-//11 - Metodo para la autenticacion
-app.post('/auth', async (req, res)=> {
-	const user = req.body.user;
-	const pass = req.body.pass;    
-    let passwordHash = await bcrypt.hash(pass, 8);
-	if (user && pass) {
-		connection.query('SELECT * FROM users WHERE user = ?', [user], async (error, results, fields)=> {
-			if( results.length == 0 || !(await bcrypt.compare(pass, results[0].pass)) ) {    
-				res.render('login', {
-                        alert: true,
-                        alertTitle: "Error",
-                        alertMessage: "USUARIO y/o PASSWORD incorrectas",
-                        alertIcon:'error',
-                        showConfirmButton: true,
-                        timer: false,
-                        ruta: 'login'    
-                    });
-				
-				//Mensaje simple y poco vistoso
-                //res.send('Incorrect Username and/or Password!');				
-			} else {         
-				//creamos una var de session y le asignamos true si INICIO SESSION       
-				req.session.loggedin = true;                
-				req.session.name = results[0].name;
-				res.render('login', {
-					alert: true,
-					alertTitle: "Conexión exitosa",
-					alertMessage: "¡LOGIN CORRECTO!",
-					alertIcon:'success',
-					showConfirmButton: false,
-					timer: 1500,
-					ruta: ''
-				});        			
-			}			
-			res.end();
-		});
-	} else {	
-		res.send('Please enter user and Password!');
-		res.end();
-	}
+                // Mensaje simple y poco vistoso
+                // res.send('Incorrect Username and/or Password!');                
+            } else {         
+                // Creamos una var de session y le asignamos true si INICIO SESSION       
+                req.session.loggedin = true;                
+                req.session.name = results[0].tipo_usuario;
+                res.render('login', {
+                    alert: true,
+                    alertTitle: "Conexión exitosa",
+                    alertMessage: "¡LOGIN CORRECTO!",
+                    alertIcon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    ruta: ''
+                });                    
+            }            
+            res.end();
+        });
+    } else {    
+        res.send('Please enter user and Password!');
+        res.end();
+    }
 });
 
 //12 - Método para controlar que está auth en todas las páginas
-app.get('/', (req, res)=> {
-	if (req.session.loggedin) {
-		res.render('index',{
-			login: true,
-			name: req.session.name			
-		});		
-	} else {
-		res.render('index',{
-			login:false,
-			name:'Debe iniciar sesión',			
-		});				
-	}
-	res.end();
+// Middleware de autenticación
+function authMiddleware(req, res, next) {
+    if (req.session.loggedin) {
+        next();
+    } else {
+        res.render('index', {
+            login: false,
+            name: 'Debe iniciar sesión',
+        });
+    }
+}
+app.get('/', authMiddleware, (req, res) => {
+    res.render('index', {
+        login: true,
+        name: req.session.name
+    });
 });
 
 
@@ -140,6 +117,77 @@ app.get('/logout', function (req, res) {
 	req.session.destroy(() => {
 	  res.redirect('/') // siempre se ejecutará después de que se destruya la sesión
 	})
+});
+
+//rutas pagina
+//alumnos
+app.get('/alumnos', authMiddleware, (req, res) => {
+    connection.query('Call VerAlumnos()', (error, results) => {
+        if (error) {
+            throw error;
+        } else {
+            res.render('alumnos', {
+                login: true,
+                name: req.session.name,
+                results: results[0]
+            });
+        }
+    });
+});
+
+//grupos
+app.get('/grupos',(req,res)=>{
+    
+    connection.query('Call VerGruposTutorias()',(error,results)=>{
+        if(error){
+            throw error;
+        }else{
+            res.render('grupos', { results: results[0] });
+        }
+    });
+    
+});
+//profesores
+app.get('/profesores',(req,res)=>{
+    
+    connection.query('Call VerProfesores()',(error,results)=>{
+        if(error){
+            throw error;
+        }else{
+            res.render('profesores', { results: results[0] });
+        }
+    });
+    
+});
+//reporte
+app.get('/reportes',(req,res)=>{
+    
+    connection.query('Call VerReportesTutor()',(error,results)=>{
+        if(error){
+            throw error;
+        }else{
+            res.render('reportes', { results: results[0] });
+        }
+    });
+    
+});
+//tutores
+app.get('/tutores',(req,res)=>{
+    
+    connection.query('Call VerTutores()',(error,results)=>{
+        if(error){
+            throw error;
+        }else{
+            res.render('tutores', { results: results[0] });
+        }
+    });
+    
+});
+//crear registros
+app.get('/create',(req,res)=>{
+    
+    res.render('create');
+    
 });
 
 
