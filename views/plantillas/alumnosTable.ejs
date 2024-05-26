@@ -1,0 +1,40 @@
+<h1 class="my-4">Lista de Alumnos</h1>
+
+<!-- Botón para crear nuevo tutor -->
+<a href="/create" class="btn btn-outline-primary mb-4">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="transform: rotate(90deg);">
+    <path fill-rule="evenodd" d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H1a1 1 0 1 1 0-2h6V1a1 1 0 0 1 1-1z"/>
+  </svg> Crear Nuevo Tutor
+</a>
+
+<table class="table table-bordered table-striped text-center">
+  <thead class="bg-primary text-white">
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Correo</th>
+      <th scope="col">Teléfono</th>
+      <th scope="col">Fecha de Nacimiento</th>
+      <th scope="col">Carrera</th>
+      <th scope="col">Semestre</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% results.forEach((alumno) => { %>
+      <tr>
+        <td><%= alumno.id_alumno %></td>
+        <td><%= alumno.nombre %> <%= alumno.apellido_P %> <%= alumno.apellido_M %></td>
+        <td><%= alumno.correo %></td>
+        <td><%= alumno.telefono %></td>
+        <td><%= alumno.fecha_nac %></td>
+        <td><%= alumno.carrera %></td>
+        <td><%= alumno.semestre %></td>
+        <td>
+          <a href="/edit/<%= alumno.id_alumno %>" class="btn btn-outline-info">Editar</a>
+          <a href="/delete/<%= alumno.id_alumno %>" class="btn btn-outline-danger">Borrar</a>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
