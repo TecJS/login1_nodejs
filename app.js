@@ -136,49 +136,61 @@ app.get('/alumnos', authMiddleware, (req, res) => {
 });
 
 //grupos
-app.get('/grupos',(req,res)=>{
+app.get('/grupos',authMiddleware,(req,res)=>{
     
     connection.query('Call VerGruposTutorias()',(error,results)=>{
         if(error){
             throw error;
         }else{
-            res.render('grupos', { results: results[0] });
+            res.render('grupos', { 
+				login: true,
+                name: req.session.name,
+                results: results[0] });
         }
     });
     
 });
 //profesores
-app.get('/profesores',(req,res)=>{
+app.get('/profesores',authMiddleware,(req,res)=>{
     
     connection.query('Call VerProfesores()',(error,results)=>{
         if(error){
             throw error;
         }else{
-            res.render('profesores', { results: results[0] });
+            res.render('profesores', { 
+				login: true,
+                name: req.session.name,
+                results: results[0] });
         }
     });
     
 });
 //reporte
-app.get('/reportes',(req,res)=>{
+app.get('/reportes',authMiddleware,(req,res)=>{
     
     connection.query('Call VerReportesTutor()',(error,results)=>{
         if(error){
             throw error;
         }else{
-            res.render('reportes', { results: results[0] });
+            res.render('reportes', { login: true,
+                name: req.session.name,
+                results: results[0]
+			 });
         }
     });
     
 });
 //tutores
-app.get('/tutores',(req,res)=>{
+app.get('/tutores',authMiddleware,(req,res)=>{
     
     connection.query('Call VerTutores()',(error,results)=>{
         if(error){
             throw error;
         }else{
-            res.render('tutores', { results: results[0] });
+            res.render('tutores', { 
+				login: true,
+                name: req.session.name,
+                results: results[0] });
         }
     });
     
