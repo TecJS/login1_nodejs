@@ -7,8 +7,7 @@
     <div class="container">
         <% if (login) { %>                
             <h1>Usuario conectado: <strong><%= name %></strong></h1>
-            <h2>Rol: <strong><%= rol %></strong></h2>
-            <%- include('plantillas/alumnosTable'); %>          
+            <%- include('plantillas/alumnosTutorTable'); %>          
             <a href="logout" class="a-logout">Logout</a>
         <%} else { %>
             <h1><strong><%= name %></strong></h1>   

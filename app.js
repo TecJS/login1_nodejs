@@ -65,7 +65,8 @@ app.post('/auth', (req, res) => {
             } else {         
                 // Creamos una var de session y le asignamos true si INICIO SESSION       
                 req.session.loggedin = true;                
-                req.session.name = results[0].tipo_usuario;
+                req.session.name = results[0].codigo_usuario;
+                req.session.rol = results[0].tipo_usuario;
                 res.render('login', {
                     alert: true,
                     alertTitle: "Conexión exitosa",
@@ -99,7 +100,8 @@ function authMiddleware(req, res, next) {
 app.get('/', authMiddleware, (req, res) => {
     res.render('index', {
         login: true,
-        name: req.session.name
+        name: req.session.name,
+        rol: req.session.rol
     });
 });
 
@@ -129,6 +131,7 @@ app.get('/alumnos', authMiddleware, (req, res) => {
             res.render('alumnos', {
                 login: true,
                 name: req.session.name,
+                rol: req.session.rol,
                 results: results[0]
             });
         }
@@ -194,6 +197,21 @@ app.get('/tutores',authMiddleware,(req,res)=>{
         }
     });
     
+});
+//usuarios
+app.get('/usuarios', authMiddleware, (req, res) => {
+    connection.query('Call VerUsuarios()', (error, results) => {
+        if (error) {
+            throw error;
+        } else {
+            res.render('Usuarios', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,
+                results: results[0]
+            });
+        }
+    });
 });
 //crear registros
 app.get('/create',(req,res)=>{
