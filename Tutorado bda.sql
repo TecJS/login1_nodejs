@@ -1,3 +1,5 @@
+ALTER USER 'root'@'localhost' IDENTIFIED BY '1234';
+
 DROP DATABASE IF EXISTS bdescuela;
 CREATE DATABASE bdescuela;
 USE bdescuela;
