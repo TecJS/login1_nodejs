@@ -213,6 +213,14 @@ app.get('/usuarios', authMiddleware, (req, res) => {
         }
     });
 });
+//usuarios
+app.get('/reporteCreate', authMiddleware, (req, res) => {
+            res.render('ReporteCreate', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,
+            }); 
+});
 //crear registros
 app.get('/create',(req,res)=>{
     

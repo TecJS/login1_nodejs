@@ -4,11 +4,26 @@
   <link rel="stylesheet" href="resources/css/style.css">
   <body>
     <!-- Navbar -->
-    <%- include('plantillas/template'); %>
+    <% if (login) { %>                
+      <% if (rol=='alumno') { %>                
+        <%- include('plantillas/navAlumno'); %>
+      <% } %>
+      <% if (rol=='tutor') { %>                
+        <%- include('plantillas/navTutor'); %>
+      <% } %>
+      <% if (rol=='administrador') { %>                
+        <%- include('plantillas/navAdmin'); %>
+      <% } %>
+  <%}  %>
+   
+  
+     
+    
     <div class="container">
       <h1>Página de Inicio</h1>
       <% if (login) { %>                
-          <h1>Usuario conectado: <strong><%= name %></strong></h1>                        
+          <h1>Usuario conectado: <strong><%= name %></strong></h1>
+          <h2>Rol: <strong><%= rol %></strong></h2>                        
           <a href="logout" class="a-logout">Logout</a>
       <%} else { %>
           <h1><strong><%= name %></strong></h1>   
