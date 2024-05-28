@@ -4,21 +4,7 @@
   <link rel="stylesheet" href="resources/css/style.css">
   <body>
     <!-- Navbar -->
-    <% if (login) { %>                
-      <% if (rol=='alumno') { %>                
-        <%- include('plantillas/navAlumno'); %>
-      <% } %>
-      <% if (rol=='tutor') { %>                
-        <%- include('plantillas/navTutor'); %>
-      <% } %>
-      <% if (rol=='administrador') { %>                
-        <%- include('plantillas/navAdmin'); %>
-      <% } %>
-  <%}  %>
-   
-  
-     
-    
+    <%- include('plantillas/nav'); %>
     <div class="container">
       <h1>Página de Inicio</h1>
       <% if (login) { %>                

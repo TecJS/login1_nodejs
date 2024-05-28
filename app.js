@@ -48,25 +48,18 @@ app.post('/auth', (req, res) => {
     const pass = req.body.pass;
 
     if (user && pass) {
-        connection.query('SELECT * FROM Usuarios WHERE codigo_usuario = ?', [user], (error, results, fields) => {
-            if (results.length == 0 || results[0].contrasena !== pass) {    
-                res.render('login', {
-                    alert: true,
-                    alertTitle: "Error",
-                    alertMessage: "USUARIO y/o PASSWORD incorrectas",
-                    alertIcon: 'error',
-                    showConfirmButton: true,
-                    timer: false,
-                    ruta: 'login'
-                });
+        connection.query('CALL VerSesion(?)', [user], function(error, results, fields) {
+            if ( results[0][0].contrasena !== pass) {    
+                res.send(results[0].contrasena);
 
                 // Mensaje simple y poco vistoso
                 // res.send('Incorrect Username and/or Password!');                
             } else {         
                 // Creamos una var de session y le asignamos true si INICIO SESSION       
                 req.session.loggedin = true;                
-                req.session.name = results[0].codigo_usuario;
-                req.session.rol = results[0].tipo_usuario;
+                req.session.name = results[0][0].codigo_usuario;
+                req.session.rol = results[0][0].tipo_usuario;
+                req.session.idref = results[0][0].id_referencia;
                 res.render('login', {
                     alert: true,
                     alertTitle: "Conexión exitosa",
@@ -148,6 +141,7 @@ app.get('/grupos',authMiddleware,(req,res)=>{
             res.render('grupos', { 
 				login: true,
                 name: req.session.name,
+                rol: req.session.rol,  
                 results: results[0] });
         }
     });
@@ -163,6 +157,7 @@ app.get('/profesores',authMiddleware,(req,res)=>{
             res.render('profesores', { 
 				login: true,
                 name: req.session.name,
+                rol: req.session.rol,  
                 results: results[0] });
         }
     });
@@ -177,6 +172,7 @@ app.get('/reportes',authMiddleware,(req,res)=>{
         }else{
             res.render('reportes', { login: true,
                 name: req.session.name,
+                rol: req.session.rol,  
                 results: results[0]
 			 });
         }
@@ -193,6 +189,7 @@ app.get('/tutores',authMiddleware,(req,res)=>{
             res.render('tutores', { 
 				login: true,
                 name: req.session.name,
+                rol: req.session.rol,  
                 results: results[0] });
         }
     });
@@ -213,13 +210,28 @@ app.get('/usuarios', authMiddleware, (req, res) => {
         }
     });
 });
-//usuarios
+//reportecreate
 app.get('/reporteCreate', authMiddleware, (req, res) => {
             res.render('ReporteCreate', {
                 login: true,
                 name: req.session.name,
                 rol: req.session.rol,
             }); 
+});
+//infoalumnos
+app.get('/infoAlumnos', authMiddleware, (req, res) => {
+    connection.query('Call VerAlumnoPorID(?)',[req.session.idref], (error, results) => {
+        if (error) {
+            throw error;
+        } else {
+            res.render('Alumnoinfo', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,               
+                results: results[0]
+            });
+        }
+    });
 });
 //crear registros
 app.get('/create',(req,res)=>{

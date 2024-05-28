@@ -1,0 +1,12 @@
+ <!-- Navbar -->
+ <% if (login) { %>                
+    <% if (rol=='alumno') { %>                
+      <%- include('navAlumno'); %>
+    <% } %>
+    <% if (rol=='tutor') { %>                
+      <%- include('navTutor'); %>
+    <% } %>
+    <% if (rol=='administrador') { %>                
+      <%- include('navAdmin'); %>
+    <% } %>
+  <%}  %>  
