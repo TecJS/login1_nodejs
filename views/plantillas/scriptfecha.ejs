@@ -1,0 +1,12 @@
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const opciones = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const formateador = new Intl.DateTimeFormat('es-ES', opciones);
+
+        document.querySelectorAll('.fecha-nac').forEach(span => {
+            const fechaOriginal = span.getAttribute('data-fecha-nac');
+            const fechaFormateada = formateador.format(new Date(fechaOriginal));
+            span.textContent = fechaFormateada;
+        });
+    });
+</script>

@@ -16,7 +16,6 @@
                   <th scope="col">Nombre</th>
                   <th scope="col">Correo</th>
                   <th scope="col">Teléfono</th>
-                  <th scope="col">Fecha de Nacimiento</th>
                   <th scope="col">Sexo</th>
                   <th scope="col">Acciones</th>
                   <!-- Agregar más columnas según los datos adicionales -->
@@ -30,13 +29,11 @@
                       <td><%= tutor.nombre %> <%= tutor.apellido_P %> <%= tutor.apellido_M %></td>
                       <td><%= tutor.correo %></td>
                       <td><%= tutor.telefono %></td>
-                      <td><%= tutor.fecha_nac %></td>
                       <td><%= tutor.sexo %></td>
                       <!-- Agregar más celdas según los datos adicionales -->
                       <!-- Por ejemplo: <td><%= tutor.direccion %></td> -->
                       <td>
                         <a href="/edit/<%= tutor.id_tutor %>" class="btn btn-outline-info">Editar</a>
-                        <a href="/delete/<%= tutor.id_tutor %>" class="btn btn-outline-danger">Borrar</a>
                     </td>
                   </tr>
                   

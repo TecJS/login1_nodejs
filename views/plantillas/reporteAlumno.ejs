@@ -9,6 +9,7 @@
               <tr>
                   <th scope="col">Fecha</th>
                   <th scope="col">Reporte</th>
+                  <th scope="col">Calificacion</th>
                   <!-- Agregar más columnas según los datos adicionales -->
                   <!-- Por ejemplo: <th scope="col">Dirección</th> -->
               </tr>
@@ -16,8 +17,9 @@
           <tbody>
               <% results.forEach((tutor) => { %>
                   <tr>
-                      <td><%= tutor.fecha %></td>
+                      <td><span class="fecha-nac" data-fecha-nac="<%= tutor.fecha %>"></span></td>
                       <td><%= tutor.reporte %></td>
+                      <td><%= tutor.prom_general %></td>
                       <!-- Agregar más celdas según los datos adicionales -->
                       <!-- Por ejemplo: <td><%= tutor.direccion %></td> -->
                   </tr>

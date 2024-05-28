@@ -1,12 +1,11 @@
 <div class="container mt-5">
-        <h1 class="mb-4">Información del Alumno</h1>
-        
-        <div class="card">
-            <div class="card-body">
-             <% results.forEach((alumno) => { %>   
+    <h1 class="mb-4">Información del Alumno</h1>
+    <div class="card">
+        <div class="card-body">
+            <% results.forEach((alumno) => { %>   
                 <h5 class="card-title"><%= alumno.nombre %> <%= alumno.apellido_P %> <%= alumno.apellido_M %></h5>
                 <p class="card-text"><strong>ID:</strong> <%= alumno.id_alumno %></p>
-                <p class="card-text"><strong>Fecha de Nacimiento:</strong> <%= alumno.fecha_nac %></p>
+                <p class="card-text"><strong>Fecha de Nacimiento:</strong> <span class="fecha-nac" data-fecha-nac="<%= alumno.fecha_nac %>"></span></p>
                 <p class="card-text"><strong>Teléfono:</strong> <%= alumno.telefono %></p>
                 <p class="card-text"><strong>Correo:</strong> <%= alumno.correo %></p>
                 <p class="card-text"><strong>Dirección:</strong> <%= alumno.calle %>, No. <%= alumno.numero %>, <%= alumno.colonia %>, CP <%= alumno.cp %>, <%= alumno.departamento %></p>
@@ -16,8 +15,9 @@
                 <p class="card-text"><strong>Tutor:</strong> <%= alumno.nombre_tutor %></p>
                 <p class="card-text"><strong>Grupo de Tutorías:</strong> <%= alumno.grupo_tutorias %></p>
                 <p class="card-text"><strong>Horario No.:</strong> <%= alumno.horario_no %></p>
-                <% }); %> 
-            </div>
+            <% }); %> 
         </div>
     </div>
+</div>
 
+<%- include('scriptfecha'); %>

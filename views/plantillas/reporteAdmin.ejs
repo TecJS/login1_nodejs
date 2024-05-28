@@ -15,6 +15,7 @@
                   <th scope="col">Alumno</th>
                   <th scope="col">Fecha</th>
                   <th scope="col">Reporte</th>
+                  <th scope="col">Calificacion</th>
                   <!-- Agregar más columnas según los datos adicionales -->
                   <!-- Por ejemplo: <th scope="col">Dirección</th> -->
               </tr>
@@ -27,8 +28,9 @@
                       <td><%= tutor.nombre_tutor %> <%= tutor.apellido_P_tutor %> <%= tutor.apellido_M_tutor %></td>
                       <td><%= tutor.id_alumno %></td>
                       <td><%= tutor.nombre_alumno %> <%= tutor.apellido_P_alumno %> <%= tutor.apellido_M_alumno %></td>
-                      <td><%= tutor.fecha %></td>
+                      <td><span class="fecha-nac" data-fecha-nac="<%= tutor.fecha %>"></td>
                       <td><%= tutor.reporte %></td>
+                      <td><%= tutor.prom_general %></td>
                       <!-- Agregar más celdas según los datos adicionales -->
                       <!-- Por ejemplo: <td><%= tutor.direccion %></td> -->
                   </tr>

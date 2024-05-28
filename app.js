@@ -117,19 +117,57 @@ app.get('/logout', function (req, res) {
 //rutas pagina
 //alumnos
 app.get('/alumnos', authMiddleware, (req, res) => {
-    connection.query('Call VerAlumnos()', (error, results) => {
-        if (error) {
-            throw error;
-        } else {
-            res.render('alumnos', {
-                login: true,
-                name: req.session.name,
-                rol: req.session.rol,
-                results: results[0]
-            });
-        }
-    });
+    let query;
+    let params = []; // Array para almacenar los parámetros de la consulta
+
+    // Filtrando por campos si están presentes en la consulta
+    const { nombre, carrera, semestre } = req.query;
+
+    if (req.session.rol == 'tutor') {
+        query = 'Call VerAlumnosPorTutor(?)';
+        params = [req.session.idref]; // Agregar el idref del tutor a los parámetros
+    } else if (req.session.rol == 'administrador') {
+        query = 'Call VerAlumnos()';
+        // No se necesitan parámetros adicionales para esta consulta, params permanece vacío
+    }
+
+    if (req.session.rol !== 'alumno') {
+        // Ejecutar la consulta inicial
+        connection.query(query, params, (error, results) => {
+            if (error) {
+                throw error;
+            } else {
+                let alumnos = results[0];
+
+                // Aplicar filtros en el servidor después de obtener los resultados
+                if (nombre) {
+                    alumnos = alumnos.filter(alumno => alumno.nombre.toLowerCase().includes(nombre.toLowerCase()));
+                }
+                if (carrera) {
+                    alumnos = alumnos.filter(alumno => alumno.carrera.toLowerCase().includes(carrera.toLowerCase()));
+                }
+                if (semestre) {
+                    alumnos = alumnos.filter(alumno => alumno.semestre == semestre);
+                }
+
+                // Renderizar la vista con los resultados filtrados
+                res.render('Alumnos', {
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    results: alumnos
+                });
+            }
+        });
+    } else {
+        res.render('Noautorizado', {
+            login: true,
+            name: req.session.name,
+            rol: req.session.rol
+        });
+    }
 });
+
 
 //grupos
 app.get('/grupos', authMiddleware, (req, res) => {
@@ -164,20 +202,27 @@ app.get('/grupos', authMiddleware, (req, res) => {
 });
 //profesores
 app.get('/profesores',authMiddleware,(req,res)=>{
-    
-    connection.query('Call VerProfesores()',(error,results)=>{
-        if(error){
-            throw error;
-        }else{
-            res.render('profesores', { 
-				login: true,
+    if (req.session.rol == 'administrador'){
+        connection.query('Call VerProfesores()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('profesores', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,  
+                    results: results[0] 
+                });
+            }
+        });
+    }else {
+            res.render('Noautorizado',{
+                login: true,
                 name: req.session.name,
-                rol: req.session.rol,  
-                results: results[0] });
-        }
-    });
-    
+                rol: req.session.rol}) 
+    } 
 });
+
 //reporte
 app.get('/reportes', authMiddleware, (req, res) => {
     let query;
@@ -226,6 +271,7 @@ app.get('/tutores',authMiddleware,(req,res)=>{
 });
 //usuarios
 app.get('/usuarios', authMiddleware, (req, res) => {
+   if (req.session.rol == 'administrador'){
     connection.query('Call VerUsuarios()', (error, results) => {
         if (error) {
             throw error;
@@ -238,6 +284,12 @@ app.get('/usuarios', authMiddleware, (req, res) => {
             });
         }
     });
+    }else {
+        res.render('Noautorizado',{
+            login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+        } 
 });
 //reportecreate
 app.get('/reporteCreate', authMiddleware, (req, res) => {
@@ -261,6 +313,32 @@ app.get('/infoAlumnos', authMiddleware, (req, res) => {
             });
         }
     });
+});
+//alumnosver
+app.get('/alumno/:id', authMiddleware, (req, res) => {
+
+    if (req.session.rol !== 'alumno') {
+        const alumnoId = req.params.id;
+        const query = 'CALL VerAlumnoPorID(?)';
+        const params = [alumnoId];
+        // Ejecutar la consulta con la query y los params
+        connection.query(query, params, (error, results) => {
+        if (error) {
+            throw error;
+        } else {
+            // Renderizar la vista reportes con los resultados obtenidos
+            res.render('Alumnoinfo', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,
+                results: results[0]
+            });
+        }
+    });
+    } else {res.render('Noautorizado',{login: true,
+        name: req.session.name,
+        rol: req.session.rol}) }
+    
 });
 //crear registros
 app.get('/create',(req,res)=>{
