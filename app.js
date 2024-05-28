@@ -132,19 +132,34 @@ app.get('/alumnos', authMiddleware, (req, res) => {
 });
 
 //grupos
-app.get('/grupos',authMiddleware,(req,res)=>{
-    
-    connection.query('Call VerGruposTutorias()',(error,results)=>{
-        if(error){
+app.get('/grupos', authMiddleware, (req, res) => {
+    let query;
+    let params = []; // Array para almacenar los parámetros de la consulta
+    if(req.session.rol == 'tutor') {
+        query = 'Call VerGruposTutoriasID(?)';
+        params = [req.session.idref]; // Agregar el idref del alumno a los parámetros
+    }else if(req.session.rol == 'administrador') {
+        query = 'Call VerGruposTutorias()';
+        // No se necesitan parámetros adicionales para esta consulta, params permanece vacío
+    }
+    if (req.session.rol !== 'alumno') {
+        // Ejecutar la consulta con la query y los params
+        connection.query(query, params, (error, results) => {
+        if (error) {
             throw error;
-        }else{
-            res.render('grupos', { 
-				login: true,
+        } else {
+            // Renderizar la vista reportes con los resultados obtenidos
+            res.render('grupos', {
+                login: true,
                 name: req.session.name,
-                rol: req.session.rol,  
-                results: results[0] });
+                rol: req.session.rol,
+                results: results[0]
+            });
         }
     });
+    } else {res.render('Noautorizado',{login: true,
+        name: req.session.name,
+        rol: req.session.rol}) }
     
 });
 //profesores
@@ -164,21 +179,35 @@ app.get('/profesores',authMiddleware,(req,res)=>{
     
 });
 //reporte
-app.get('/reportes',authMiddleware,(req,res)=>{
-    
-    connection.query('Call VerReportesTutor()',(error,results)=>{
-        if(error){
+app.get('/reportes', authMiddleware, (req, res) => {
+    let query;
+    let params = []; // Array para almacenar los parámetros de la consulta
+    if (req.session.rol == 'alumno') {
+        query = 'Call VerReportesAlumnosID(?)';
+        params = [req.session.idref]; // Agregar el idref del alumno a los parámetros
+    } else if(req.session.rol == 'tutor') {
+        query = 'Call VerReportesTutorID(?)';
+        params = [req.session.idref]; // Agregar el idref del alumno a los parámetros
+    }else if(req.session.rol == 'administrador') {
+        query = 'Call VerReportesTutor()';
+        // No se necesitan parámetros adicionales para esta consulta, params permanece vacío
+    }
+    // Ejecutar la consulta con la query y los params
+    connection.query(query, params, (error, results) => {
+        if (error) {
             throw error;
-        }else{
-            res.render('reportes', { login: true,
+        } else {
+            // Renderizar la vista reportes con los resultados obtenidos
+            res.render('reportes', {
+                login: true,
                 name: req.session.name,
-                rol: req.session.rol,  
+                rol: req.session.rol,
                 results: results[0]
-			 });
+            });
         }
     });
-    
 });
+
 //tutores
 app.get('/tutores',authMiddleware,(req,res)=>{
     
