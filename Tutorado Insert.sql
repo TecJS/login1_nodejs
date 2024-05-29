@@ -69,8 +69,8 @@ VALUES
     ('2024-05-25', 'Buen desempeño en las tareas y participación en clase.', 1, 1, 8.50),
     ('2024-05-25', 'Necesita mejorar la entrega de tareas.', 1, 2, 6.75),
     ('2024-05-25', 'Excelente trabajo en equipo.', 2, 3, 9.00),
-    ('2024-05-25', 'Buenas notas en los exámenes, puede avanzar al siguiente nivel.', 2, 4, 8.00);
-
+    ('2024-05-25', 'Buenas notas en los exámenes, puede avanzar al siguiente nivel.', 2, 4, 8.00),
+	 ('2024-05-26', 'MAl.', 1, 3, 5.50);
 
 -- Administrador
 INSERT INTO Administrador (nombre, apellido, telefono)

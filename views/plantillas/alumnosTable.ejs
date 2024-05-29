@@ -57,12 +57,12 @@
                 <% results.forEach((alumno) => { %>
                     <tr>
                         <td><%= alumno.id_alumno %></td>
-                        <td><%= alumno.nombre %> <%= alumno.apellido_P %> <%= alumno.apellido_M %></td>
+                        <td><%= alumno.nombre_completo %></td>
                         <td><%= alumno.carrera %></td>
                         <td><%= alumno.semestre %></td>
                         <td><%= alumno.grupo_tutorias %></td>
                         <td>
-                            <a href="/edit/<%= alumno.id_alumno %>" class="btn btn-outline-info">Editar</a>                  
+                            <a href="/edit/<%= alumno.id_alumno %>" class="btn btn-outline-info">Grupo</a>                  
                             <a href="/alumno/<%= alumno.id_alumno %>" class="btn btn-outline-secondary">Ver</a>
                           </td>
                     </tr>

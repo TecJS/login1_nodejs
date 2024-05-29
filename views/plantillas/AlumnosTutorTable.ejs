@@ -1,28 +1,86 @@
-<h1 class="my-4">Lista de Alumnos</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alumnos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Lista de Alumnos</h1>
 
-<!-- Botón para crear nuevo tutor -->
+        <!-- Botón para desplegar/ocultar los filtros -->
+        <button class="btn btn-info mb-3" id="toggleFilterBtn">
+            <i class="fas fa-filter"></i> Mostrar/Ocultar Filtros
+        </button>
 
-<table class="table table-bordered table-striped text-center">
-  <thead class="bg-primary text-white">
-    <tr>
-      <th scope="col">Nombre</th>
-      <th scope="col">Telefono</th>
-      <th scope="col">Carrera</th>
-      <th scope="col">Semestre</th>
-      <th scope="col">TutorID</th>
-      <th scope="col">Grupo</th>      
-    </tr>
-  </thead>
-  <tbody>
-    <% results.forEach((alumno) => { %>
-      <tr>
-        <td><%= alumno.nombre_completo %></td>
-        <td><%= alumno.telefono %></td>
-        <td><%= alumno.carrera %></td>
-        <td><%= alumno.semestre %></td>
-        <td><%= alumno.id_tutor %></td>
-        <td><%= alumno.grupo_tutorias %></td>
-      </tr>
-    <% }); %>
-  </tbody>
-</table>
+        <!-- Formulario de filtros -->
+        <div class="collapse" id="filterForm">
+            <form method="GET" action="/alumnos">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="carrera">Carrera</label>
+                        <input type="text" class="form-control" id="carrera" name="carrera" placeholder="Carrera">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="semestre">Semestre</label>
+                        <input type="number" class="form-control" id="semestre" name="semestre" placeholder="Semestre" min="1" max="14">
+                    </div>
+                    <div class="form-group col-md-3 align-self-end">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <table class="table table-bordered table-striped text-center">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Telefono</th>
+              <th scope="col">Carrera</th>
+              <th scope="col">Semestre</th>
+              <th scope="col">Grupo</th>      
+              <th scope="col">Acciones</th>  
+            </tr>
+          </thead>
+          <tbody>
+            <% results.forEach((alumno) => { %>
+              <tr>
+                <td><%= alumno.nombre_completo %></td>
+                <td><%= alumno.telefono %></td>
+                <td><%= alumno.carrera %></td>
+                <td><%= alumno.semestre %></td>
+                <td><%= alumno.grupo_tutorias %></td>
+                <td>
+                  <a href="/reporteCreate/<%= alumno.id_alumno %>" class="btn btn-outline-info">Reporte</a>                  
+                  <a href="/alumno/<%= alumno.id_alumno %>" class="btn btn-outline-secondary">Ver</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+    </div>
+
+    <script>
+        // JavaScript para alternar la visibilidad del formulario de filtros
+        document.getElementById('toggleFilterBtn').addEventListener('click', function() {
+            var filterForm = document.getElementById('filterForm');
+            if (filterForm.classList.contains('show')) {
+                filterForm.classList.remove('show');
+            } else {
+                filterForm.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

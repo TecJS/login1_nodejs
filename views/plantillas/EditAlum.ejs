@@ -1,0 +1,82 @@
+<% results.forEach((alumno) => { 
+    let fechaNacimiento = new Date(alumno.fecha_nac);
+    let formattedDate = fechaNacimiento.toISOString().split('T')[0];
+%>
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Información del Alumno</h1>
+    <form action="/editar-alumno/<%= alumno.id_alumno %>" method="POST">
+
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono"
+                        value="<%= alumno.telefono %>" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="correo">Correo:</label>
+                    <input type="email" class="form-control" id="correo" name="correo"
+                        value="<%= alumno.correo %>" required>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="form-row">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="calle">Calle:</label>
+                    <input type="text" class="form-control" id="calle" name="calle"
+                        value="<%= alumno.calle %>" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="numero">Número:</label>
+                    <input type="text" class="form-control" id="numero" name="numero"
+                        value="<%= alumno.numero %>" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="colonia">Colonia:</label>
+                    <input type="text" class="form-control" id="colonia" name="colonia"
+                        value="<%= alumno.colonia %>" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="cp">Código Postal:</label>
+                    <input type="text" class="form-control" id="cp" name="cp" value="<%= alumno.cp %>"
+                        required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="departamento">Departamento:</label>
+                    <input type="text" class="form-control" id="departamento" name="departamento"
+                        value="<%= alumno.departamento %>" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            
+        </div>
+
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="estadoCivil">Estado Civil:</label>
+                    <input type="text" class="form-control" id="estadoCivil" name="estadoCivil"
+                        value="<%= alumno.estado_civil %>" required>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+</div>
+<% }); %> 

@@ -77,14 +77,17 @@ END$$
 
 CREATE PROCEDURE VerTutores()
 BEGIN
-    SELECT t.id_tutor, p.nombre, p.apellido_P, p.apellido_M, p.sexo, p.fecha_nac, p.telefono, p.correo, p.calle, p.numero, p.colonia, p.cp, p.departamento
+    SELECT t.id_tutor,
+    p.nombre, p.apellido_P, p.apellido_M, p.sexo, p.fecha_nac, p.telefono, p.correo, p.calle, p.numero, p.colonia, p.cp, p.departamento
     FROM Tutores t
     INNER JOIN Profesores p ON t.id_tutor = p.id_profesor;
 END$$
 
 CREATE PROCEDURE VerAlumnos()
 BEGIN
-    SELECT a.id_alumno, a.nombre, a.apellido_P, a.apellido_M, a.fecha_nac, a.telefono, a.correo, a.calle, a.numero, a.colonia, a.cp, a.departamento, a.carrera, a.semestre, a.horario_no, a.estado_civil,
+    SELECT a.id_alumno,
+    CONCAT(a.nombre, ' ', a.apellido_P, ' ', a.apellido_M) AS nombre_completo,
+    a.fecha_nac, a.telefono, a.correo, a.calle, a.numero, a.colonia, a.cp, a.departamento, a.carrera, a.semestre, a.horario_no, a.estado_civil,
            g.nombre_grupo AS grupo_tutorias
     FROM Alumnos a
     LEFT JOIN Grupos_Tutorias g ON a.id_grupo = g.id_grupo;
@@ -139,12 +142,14 @@ BEGIN
            rt.reporte,
            rt.prom_general
     FROM Reportes_Tutor rt
-    INNER JOIN Tutores t ON rt.id_tutor = t.id_tutor
+INNER JOIN Alumnos a ON rt.id_alumno = a.id_alumno
+    INNER JOIN Grupos_Tutorias gt ON a.id_grupo = gt.id_grupo
+    INNER JOIN Tutores t ON gt.id_tutor = t.id_tutor
     INNER JOIN Profesores p ON t.id_tutor = p.id_profesor
-    INNER JOIN Alumnos a ON rt.id_alumno = a.id_alumno
     WHERE t.id_tutor = tutor_id;
 END$$
 
+call VerReportesTutorID(1);
 CREATE PROCEDURE VerReportesAlumnosID(IN alumno_id INT)
 BEGIN
     SELECT rt.id_reporte,
@@ -160,6 +165,7 @@ CREATE PROCEDURE VerAlumnosPorTutor(
 )
 BEGIN
     SELECT p_id_tutor AS id_tutor,
+			a.id_alumno,
            CONCAT(a.nombre, ' ', a.apellido_P, ' ', a.apellido_M) AS nombre_completo,
            a.telefono,
            a.carrera,
@@ -240,5 +246,53 @@ BEGIN
     LEFT JOIN Administrador ad ON u.id_admin = ad.id_admin AND u.tipo_usuario = 'administrador'
     WHERE u.codigo_usuario = p_codigo_usuario;
 END$$
+
+-- Procedimiento para editar los datos de un alumno
+CREATE PROCEDURE EditarAlumno(
+    IN p_id_alumno INT,
+    IN p_telefono VARCHAR(15),
+    IN p_correo VARCHAR(100),
+    IN p_calle VARCHAR(100),
+    IN p_numero VARCHAR(10),
+    IN p_colonia VARCHAR(100),
+    IN p_cp VARCHAR(10),
+    IN p_departamento VARCHAR(100),
+    IN p_estado_civil VARCHAR(20)
+)
+BEGIN
+    UPDATE Alumnos
+    SET telefono = p_telefono,
+        correo = p_correo,
+        calle = p_calle,
+        numero = p_numero,
+        colonia = p_colonia,
+        cp = p_cp,
+        departamento = p_departamento,
+        estado_civil = p_estado_civil
+    WHERE id_alumno = p_id_alumno;
+END$$
+CREATE PROCEDURE InsertarReporteTutor(
+    IN p_id_tutor INT,
+    IN p_id_alumno INT,
+    IN p_prom_general DECIMAL(3,2),
+    IN p_fecha DATE,
+    IN p_reporte TEXT
+)
+BEGIN
+    -- Verificar que el tutor exista
+    IF (SELECT COUNT(*) FROM Tutores WHERE id_tutor = p_id_tutor) = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El tutor no existe.';
+    END IF;
+
+    -- Verificar que el alumno exista
+    IF (SELECT COUNT(*) FROM Alumnos WHERE id_alumno = p_id_alumno) = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El alumno no existe.';
+    END IF;
+
+    -- Insertar el reporte de tutoría
+    INSERT INTO Reportes_Tutor (id_tutor, id_alumno, prom_general, fecha, reporte)
+    VALUES (p_id_tutor, p_id_alumno, p_prom_general, p_fecha, p_reporte);
+END $$
+
 
 DELIMITER ;

@@ -42,7 +42,7 @@ const connection = require('./database/db');
 	})
 
 
-// Método para la autenticación sin encriptado
+// Método para la autenticación 
 app.post('/auth', (req, res) => {
     const user = req.body.user;
     const pass = req.body.pass;
@@ -141,7 +141,7 @@ app.get('/alumnos', authMiddleware, (req, res) => {
 
                 // Aplicar filtros en el servidor después de obtener los resultados
                 if (nombre) {
-                    alumnos = alumnos.filter(alumno => alumno.nombre.toLowerCase().includes(nombre.toLowerCase()));
+                    alumnos = alumnos.filter(alumno => alumno.nombre_completo.toLowerCase().includes(nombre.toLowerCase()));
                 }
                 if (carrera) {
                     alumnos = alumnos.filter(alumno => alumno.carrera.toLowerCase().includes(carrera.toLowerCase()));
@@ -293,13 +293,52 @@ app.get('/usuarios', authMiddleware, (req, res) => {
 });
 //reportecreate
 app.get('/reporteCreate', authMiddleware, (req, res) => {
-            res.render('ReporteCreate', {
-                login: true,
-                name: req.session.name,
-                rol: req.session.rol,
-            }); 
+    const alumnoId = null;
+    if(req.session.rol == 'tutor'){
+        res.render('ReporteCreate', {
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    idref:req.session.idref,
+                    idalum: alumnoId
+                }); 
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+                
 });
-//infoalumnos
+app.get('/reporteCreate/:id', authMiddleware, (req, res) => {
+    const alumnoId = req.params.id;
+    if(req.session.rol == 'tutor'){
+        res.render('ReporteCreate', {
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    idref:req.session.idref,
+                    idalum: alumnoId
+                }); 
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+
+});
+// Ruta para crear reporte
+app.post('/reporteCreate',authMiddleware, (req, res) => {
+    const { id_tutor,id_alumno,prom_general,fecha,reporte } = req.body;
+
+    const sql = `CALL InsertarReporteTutor( ?, ?, ?, ?, ?)`;
+
+    connection.query(sql, [id_tutor,id_alumno,prom_general,fecha,reporte], (err, result) => {
+        if (err) throw err;
+        res.redirect('/reportes'); // Redirige a la ruta deseada después de editar
+    });
+});
+
+//infoalumnos ===
 app.get('/infoAlumnos', authMiddleware, (req, res) => {
     connection.query('Call VerAlumnoPorID(?)',[req.session.idref], (error, results) => {
         if (error) {
@@ -340,6 +379,44 @@ app.get('/alumno/:id', authMiddleware, (req, res) => {
         rol: req.session.rol}) }
     
 });
+
+//Edit_infoalumnos
+app.get('/editar-alumno/:id', authMiddleware, (req, res) => {
+    const alumnoId = req.params.id;
+    const params = [alumnoId];
+    if (alumnoId==req.session.idref && req.session.rol == 'alumno') {
+    connection.query('Call VerAlumnoPorID(?)',[params], (error, results) => {
+        if (error) {
+            throw error;
+        } else {
+            res.render('alumnoeditar', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,               
+                results: results[0]
+            });
+        }
+    });
+    } else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+
+});
+// Ruta para editar los datos de un alumno
+app.post('/editar-alumno/:id_alumno',authMiddleware, (req, res) => {
+    const id_alumno = req.params.id_alumno;
+    const { telefono, correo, calle, numero, colonia, cp, departamento, estadoCivil } = req.body;
+
+    const sql = `CALL EditarAlumno( ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    connection.query(sql, [id_alumno,telefono, correo, calle, numero, colonia, cp, departamento, estadoCivil], (err, result) => {
+        if (err) throw err;
+        res.redirect('/infoAlumnos'); // Redirige a la ruta deseada después de editar
+    });
+});
+
 //crear registros
 app.get('/create',(req,res)=>{
     

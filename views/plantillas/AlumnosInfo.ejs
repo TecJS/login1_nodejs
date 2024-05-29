@@ -15,6 +15,7 @@
                 <p class="card-text"><strong>Tutor:</strong> <%= alumno.nombre_tutor %></p>
                 <p class="card-text"><strong>Grupo de Tutorías:</strong> <%= alumno.grupo_tutorias %></p>
                 <p class="card-text"><strong>Horario No.:</strong> <%= alumno.horario_no %></p>
+                <a href="/editar-alumno/<%= alumno.id_alumno %>" class="btn btn-primary">Editar Información</a>
             <% }); %> 
         </div>
     </div>
