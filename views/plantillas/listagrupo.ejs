@@ -1,0 +1,32 @@
+       <!-- Encabezado -->
+       <h1 class="my-4">Grupos Tutorias</h1>
+       
+      <!-- Tabla de Alumnos -->
+<table class="table table-bordered table-striped text-center">
+   <thead class="bg-primary text-white">
+       <tr>
+           <th scope="col">ID</th>
+           <th scope="col">Nombre</th>
+           <th scope="col">Descripcion</th>
+           <th scope="col">Profesor</th>                     
+            <th scope="col">Acciones</th>
+     
+           
+       </tr>
+   </thead>
+   <tbody>
+       <% results.forEach((grupo) => { %>
+           <tr>
+               <td><%= grupo.id_grupo %></td>
+               <td><%= grupo.nombre_grupo %></td>
+               <td><%= grupo.descripcion %></td>
+               <td><%= grupo.nombre_tutor %> <%= grupo.apellido_P_tutor %> <%= grupo.apellido_M_tutor %></td>
+                               
+                <td>
+                   <a href="/asignaGrupo/<%= alumnoid%>/<%= grupo.id_grupo%>" class="btn btn-outline-info">Seleccionar</a>
+                </td>
+               
+            </tr>
+       <% }); %>
+   </tbody>
+</table>

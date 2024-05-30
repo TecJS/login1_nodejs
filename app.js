@@ -697,3 +697,39 @@ app.post('/GrupoCreate',authMiddleware, (req, res) => {
         res.redirect('/grupos'); // Redirige a la ruta deseada después de editar
     });
 });
+//asignar grupo
+app.get('/asignaGrupo/:id',authMiddleware,(req,res)=>{
+    const alumnoid = req.params.id; 
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerGruposTutorias()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('listagrupos', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    alumnoid:alumnoid,    
+                    results: results[0] 
+                });
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+
+});
+//asigana alumno a grupo
+app.get('/asignaGrupo/:id/:grupo',authMiddleware, (req, res) => {
+    const alumnoid = req.params.id; 
+    const grupoid = req.params.grupo; 
+
+    const sql = `CALL AsignarAlumnoGrupo( ?, ?)`;
+
+    connection.query(sql, [ alumnoid, grupoid], (err, result) => {
+        if (err) throw err;
+        res.redirect('/alumnos'); // Redirige a la ruta deseada después de editar
+    });
+});
