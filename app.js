@@ -634,3 +634,30 @@ app.post('/editusuario',authMiddleware, (req, res) => {
        
     });
 });
+//usuarui admid
+app.post('/UsuarioCreateAdmin',authMiddleware, (req, res) => {
+    const { Nombre, Apellidos, Telefono, Usuario,Contrasena} = req.body;
+
+    const sql = `CALL CrearAdministrador( ?, ?, ?, ?,?)`;
+
+    connection.query(sql, [Nombre, Apellidos, Telefono, Usuario,Contrasena], (err, result) => {
+        if (err) throw err;
+        res.redirect('/usuarios'); // Redirige a la ruta deseada después de editar
+    });
+});
+
+//grupo seleccion tutor
+app.get('/selectutor',authMiddleware,(req,res)=>{  
+    if(req.session.rol == 'administrador'){          
+                res.render('rolseleccion', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol
+                })
+}else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
