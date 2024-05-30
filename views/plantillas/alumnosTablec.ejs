@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alumnos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <%- include('nav'); %>
+    <div class="container">
+        <h1 class="my-4">Lista de Alumnos sin cuenta</h1>
+
+        <table class="table table-bordered table-striped text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Carrera</th>
+                    <th scope="col">Semestre</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% results.forEach((alumno) => { %>
+                    <tr>
+                        <td><%= alumno.id_alumno %></td>
+                        <td><%= alumno.nombre_completo %></td>
+                        <td><%= alumno.carrera %></td>
+                        <td><%= alumno.semestre %></td>
+                        <td>               
+                            <a href="/UsuarioCreate/<%= alumno.id_alumno %>/alumno" class="btn btn-outline-primary">Crear</a>
+                            <a href="/alumno/<%= alumno.id_alumno %>" class="btn btn-outline-secondary">Ver</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // JavaScript para alternar la visibilidad del formulario de filtros
+        document.getElementById('toggleFilterBtn').addEventListener('click', function() {
+            var filterForm = document.getElementById('filterForm');
+            if (filterForm.classList.contains('show')) {
+                filterForm.classList.remove('show');
+            } else {
+                filterForm.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

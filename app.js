@@ -482,8 +482,155 @@ app.get('/tutorCreate/:id',authMiddleware,(req,res)=>{
     
 });
 
-
+//UsuarioCreate
+app.get('/UsuarioCreate',authMiddleware,(req,res)=>{  
+    if(req.session.rol == 'administrador'){          
+                res.render('rolseleccion', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol
+                })
+}else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
+app.get('/UsuarioCreateAlumnos',authMiddleware,(req,res)=>{  
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerAlumnosSinCuenta()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('plantillas/alumnostablec', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    sitio:1,  
+                    results: results[0] });
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
+app.get('/UsuarioCreateTutor',authMiddleware,(req,res)=>{  
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerTutoresSinCuenta()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('plantillas/tutortablec', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    sitio:1,  
+                    results: results[0] });
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+});
+app.get('/UsuarioCreateAdmin',authMiddleware,(req,res)=>{  
+    if(req.session.rol == 'administrador'){          
+                res.render('admincreate', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol
+                })
+}else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
 
 app.listen(3000, (req, res)=>{
     console.log('SERVER RUNNING IN http://localhost:3000');
+});
+
+//UsuarioCreate
+app.get('/UsuarioCreate/:id/:rol', authMiddleware, (req, res) => {
+    const alumnoId = req.params.id;//idref
+    const roluser=req.params.rol
+    if(req.session.rol == 'administrador'){
+        res.render('UsuarioCreate', {
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    idref:req.session.idref,
+                    iduser: alumnoId,
+                    roluserq:roluser
+                }); 
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+
+});
+// Ruta para crear cuenta
+app.post('/UsuarioCreate',authMiddleware, (req, res) => {
+    const id_alumno = req.params.id_alumno;
+    const { IDref, rolnewusuario, Usuario, Contrasena} = req.body;
+
+    const sql = `CALL CrearUsuario( ?, ?, ?, ?)`;
+
+    connection.query(sql, [IDref, rolnewusuario, Usuario, Contrasena], (err, result) => {
+        if (err) throw err;
+        res.redirect('/usuarios'); // Redirige a la ruta deseada después de editar
+    });
+});
+// Ruta para editar ususario
+app.get('/editarUsuario/:id/:user', authMiddleware, (req, res) => {
+    const usuarioid = req.params.id;
+    const params = [usuarioid];
+    if ( req.session.rol == 'administrador') {     
+            res.render('editarusuario', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,      
+                usuarioid:usuarioid,
+                user: req.params.user      
+            });
+        
+    
+    } else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+
+});
+//editarusuario
+app.post('/editusuario',authMiddleware, (req, res) => {
+   
+    const { ID_Usuario,Usuario, Contrasena} = req.body;
+
+    const sql = `CALL EditarUsuarioContrasena( ?, ?, ?)`;
+
+    connection.query(sql, [ID_Usuario, Usuario, Contrasena], (error, result) => {
+        if (error) {
+            // Gestión de errores SQL
+            console.error('Error al editar:', error);
+            if (error.sqlState === '45000') {
+                // Mensaje personalizado para errores específicos
+                res.status(400).send(`Error: ${error.sqlMessage}`);
+            } else {
+                // Mensaje general para otros errores
+                res.status(500).send('Ocurrió un error . Por favor, intenta de nuevo.');
+            }
+        }else{
+             res.redirect('/usuarios'); // Redirige a la ruta deseada después de editar
+        }
+       
+    });
 });

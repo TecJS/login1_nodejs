@@ -320,5 +320,104 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El profesor no existe';
     END IF;
 END $$
+CREATE PROCEDURE VerAlumnosSinCuenta()
+BEGIN
+    SELECT a.id_alumno , CONCAT(a.nombre, ' ', a.apellido_P, ' ', a.apellido_M) AS nombre_completo, a.carrera , a.semestre
+    FROM Alumnos a
+    LEFT JOIN Usuarios u ON a.id_alumno = u.id_alumno AND u.tipo_usuario = 'alumno'
+    WHERE u.id_alumno IS NULL;
+END $$
 
+
+CREATE PROCEDURE CrearUsuario(
+    IN p_id INT,
+    IN p_rol ENUM('alumno', 'tutor', 'administrador'),
+    IN p_codigo_usuario VARCHAR(50),
+    IN p_contrasena VARCHAR(100)
+)
+BEGIN
+    DECLARE id_existente INT;
+    
+    -- Verificar si ya existe un usuario relacionado con el ID proporcionado
+    SELECT 
+        CASE 
+            WHEN p_rol = 'alumno' THEN id_alumno
+            WHEN p_rol = 'tutor' THEN id_tutor
+            WHEN p_rol = 'administrador' THEN id_admin
+        END INTO id_existente
+    FROM Usuarios 
+    WHERE 
+        (tipo_usuario = p_rol) AND
+        CASE 
+            WHEN p_rol = 'alumno' THEN id_alumno = p_id
+            WHEN p_rol = 'tutor' THEN id_tutor = p_id
+            WHEN p_rol = 'administrador' THEN id_admin = p_id
+        END;
+    
+    -- Si no existe un usuario relacionado con el ID proporcionado, se inserta el nuevo usuario
+    IF id_existente IS NULL THEN
+        INSERT INTO Usuarios (codigo_usuario, contrasena, tipo_usuario, id_alumno, id_tutor, id_admin) 
+        VALUES (p_codigo_usuario, p_contrasena, p_rol,
+                CASE WHEN p_rol = 'alumno' THEN p_id ELSE NULL END,
+                CASE WHEN p_rol = 'tutor' THEN p_id ELSE NULL END,
+                CASE WHEN p_rol = 'administrador' THEN p_id ELSE NULL END);
+        SELECT 'Usuario creado exitosamente';
+    ELSE
+        SELECT 'El ID proporcionado ya está asociado a otro usuario';
+    END IF;
+END $$
+
+CREATE PROCEDURE VerTutoresSinCuenta()
+BEGIN
+    SELECT p.id_profesor AS id_profesor , CONCAT(p.nombre, ' ', p.apellido_P, ' ', p.apellido_M) AS nombre_completo,p.sexo AS sexo , p.correo AS correo
+    FROM Profesores p
+    JOIN Tutores t ON p.id_profesor = t.id_tutor
+    LEFT JOIN Usuarios u ON t.id_tutor = u.id_tutor AND u.tipo_usuario = 'tutor'
+    WHERE u.id_tutor IS NULL;
+END $$
+
+CREATE PROCEDURE CrearAdministrador (
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_telefono VARCHAR(20),
+    IN p_codigo_usuario VARCHAR(50),
+    IN p_contrasena VARCHAR(100)
+)
+BEGIN
+    DECLARE last_id INT;
+
+    -- Insertar en la tabla Administrador
+    INSERT INTO Administrador (nombre, apellido, telefono)
+    VALUES (p_nombre, p_apellido, p_telefono);
+    
+    -- Obtener el último id_admin insertado
+    SET last_id = LAST_INSERT_ID();
+    
+    -- Insertar en la tabla Usuarios
+    INSERT INTO Usuarios (codigo_usuario, contrasena, tipo_usuario, id_admin)
+    VALUES (p_codigo_usuario, p_contrasena, 'administrador', last_id);
+END $$
+
+
+CREATE PROCEDURE EditarUsuarioContrasena (
+    IN p_id_usuario INT,
+    IN p_nuevo_usuario VARCHAR(50),
+    IN p_nueva_contrasena VARCHAR(100)
+)
+BEGIN
+    -- Verificar si el usuario existe
+    IF EXISTS (SELECT 1 FROM Usuarios WHERE id_usuario = p_id_usuario) THEN
+        -- Actualizar el nombre de usuario y la contraseña
+        UPDATE Usuarios
+        SET codigo_usuario = p_nuevo_usuario,
+            contrasena = p_nueva_contrasena
+        WHERE id_usuario = p_id_usuario;
+    ELSE
+        -- Si el usuario no existe, lanzar un error
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Usuario no encontrado';
+    END IF;
+END$$
 DELIMITER ;
+
+

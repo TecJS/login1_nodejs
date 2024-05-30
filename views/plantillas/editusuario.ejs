@@ -1,0 +1,18 @@
+<div class="container">
+    <h2 class="mt-5">Formulario de Crear admin</h2>
+    <form action="/editusuario" method="post" class="mt-4">
+        <div class="form-group">
+            <label for="prom_general">ID Usuario</label>
+            <input class="form-control" id="ID_Usuario" name="ID_Usuario" maxlength="90" value="<%= usuarioid %>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="prom_general">Usuario</label>
+            <input class="form-control" id="Usuario" name="Usuario" maxlength="40" value="<%= user %>"required>
+        </div>
+        <div class="form-group">
+            <label for="fecha">Contrasena</label>
+            <input  class="form-control" id="Contrasena" name="Contrasena" maxlength="90" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+  </div>
