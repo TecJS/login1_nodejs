@@ -1,0 +1,18 @@
+<div class="container">
+    <h2 class="mt-5">Formulario de Crear admin</h2>
+    <form action="/GrupoCreate" method="post" class="mt-4">
+        <div class="form-group">
+            <label for="prom_general">ID Tutor</label>
+            <input class="form-control" id="ID_tutor" name="ID_tutor" maxlength="90" value="<%= tutorId %>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="prom_general">Nombre Grupo</label>
+            <input class="form-control" id="Nombre_Grupo" name="Nombre_Grupo" maxlength="40" required>
+        </div>
+        <div class="form-group">
+            <label for="fecha">Descripcion</label>
+            <input  class="form-control" id="Descripcion" name="Descripcion" maxlength="90" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+  </div>

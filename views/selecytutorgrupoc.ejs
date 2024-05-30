@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <%- include('nav'); %>
+    <%- include('plantillas/nav'); %>
     <div class="container">
         <h1 class="my-4">Selecciona tutor para el nuevo grupo</h1>
 
@@ -28,12 +28,12 @@
             <tbody>
                 <% results.forEach((alumno) => { %>
                     <tr>
-                        <td><%= alumno.id_profesor %></td>
-                        <td><%= alumno.nombre_completo %></td>
+                        <td><%= alumno.id_tutor %></td>
+                        <td><%= alumno.nombre %> <%= alumno.apellido_P %> <%= alumno.apellido_M %></td>
                         <td><%= alumno.correo %></td>
                         <td><%= alumno.sexo %></td>
                         <td>               
-                            <a href="/UsuarioCreate/<%= alumno.id_profesor %>/tutor" class="btn btn-outline-primary">Crear</a>
+                            <a href="/GrupoSelect/<%= alumno.id_tutor %>" class="btn btn-outline-primary">Elegir</a>
                         </td>
                     </tr>
                 <% }); %>

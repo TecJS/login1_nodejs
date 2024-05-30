@@ -648,16 +648,52 @@ app.post('/UsuarioCreateAdmin',authMiddleware, (req, res) => {
 
 //grupo seleccion tutor
 app.get('/selectutor',authMiddleware,(req,res)=>{  
-    if(req.session.rol == 'administrador'){          
-                res.render('rolseleccion', { 
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerTutores()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('selecytutorgrupoc', { 
                     login: true,
                     name: req.session.name,
-                    rol: req.session.rol
-                })
-}else{
+                    rol: req.session.rol,    
+                    results: results[0] });
+            }
+        });
+    }else{
         res.render('Noautorizado',{login: true,
             name: req.session.name,
             rol: req.session.rol}) 
     }
     
+});
+//grupo creacion nombre desc
+app.get('/GrupoSelect/:id',authMiddleware,(req,res)=>{
+    
+    if(req.session.rol == 'administrador'){
+        const tutorId = req.params.id;   
+            res.render('grupocreate', {
+                login: true,
+                name: req.session.name,
+                rol: req.session.rol,      
+                tutorId:tutorId    
+            });
+        
+    
+    } else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+});
+//crear grupo
+app.post('/GrupoCreate',authMiddleware, (req, res) => {
+    const { ID_tutor, Nombre_Grupo, Descripcion} = req.body;
+
+    const sql = `CALL AgregarGrupoTutorias( ?, ?, ?)`;
+
+    connection.query(sql, [ Nombre_Grupo, Descripcion,ID_tutor], (err, result) => {
+        if (err) throw err;
+        res.redirect('/grupos'); // Redirige a la ruta deseada después de editar
+    });
 });
