@@ -256,17 +256,24 @@ app.get('/reportes', authMiddleware, (req, res) => {
 //tutores
 app.get('/tutores',authMiddleware,(req,res)=>{
     
-    connection.query('Call VerTutores()',(error,results)=>{
-        if(error){
-            throw error;
-        }else{
-            res.render('tutores', { 
-				login: true,
-                name: req.session.name,
-                rol: req.session.rol,  
-                results: results[0] });
-        }
-    });
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerTutores()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('tutores', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,  
+                    sitio:0,  
+                    results: results[0] });
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
     
 });
 //usuarios
@@ -423,6 +430,58 @@ app.get('/create',(req,res)=>{
     res.render('create');
     
 });
+//tutorCreate
+app.get('/tutorCreate',authMiddleware,(req,res)=>{
+    
+    if(req.session.rol == 'administrador'){
+        connection.query('Call VerProfesoresNoTutores()',(error,results)=>{
+            if(error){
+                throw error;
+            }else{
+                res.render('tutores', { 
+                    login: true,
+                    name: req.session.name,
+                    rol: req.session.rol,
+                    sitio:1,  
+                    results: results[0] });
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
+app.get('/tutorCreate/:id',authMiddleware,(req,res)=>{
+    
+    if(req.session.rol == 'administrador'){
+        const profesorId = req.params.id;
+        const query = 'CALL AsignarTutor(?)';
+        const params = [profesorId];
+        connection.query(query, params, (error, results) => {
+            if (error) {
+                // Gestión de errores SQL
+                console.error('Error al asignar tutor:', error);
+                if (error.sqlState === '45000') {
+                    // Mensaje personalizado para errores específicos
+                    res.status(400).send(`Error: ${error.sqlMessage}`);
+                } else {
+                    // Mensaje general para otros errores
+                    res.status(500).send('Ocurrió un error al asignar el tutor. Por favor, intenta de nuevo.');
+                }
+            }else{
+                res.redirect('/tutores');
+            }
+        });
+    }else{
+        res.render('Noautorizado',{login: true,
+            name: req.session.name,
+            rol: req.session.rol}) 
+    }
+    
+});
+
 
 
 app.listen(3000, (req, res)=>{

@@ -294,5 +294,31 @@ BEGIN
     VALUES (p_id_tutor, p_id_alumno, p_prom_general, p_fecha, p_reporte);
 END $$
 
+CREATE PROCEDURE VerProfesoresNoTutores()
+BEGIN
+    -- Selecciona solo las columnas específicas de la tabla Profesores que no tienen coincidencias en la tabla Tutores
+    SELECT p.id_profesor, p.nombre, p.apellido_P, p.apellido_M, p.fecha_nac ,p.sexo, p.correo,telefono 
+    FROM Profesores p
+    LEFT JOIN Tutores t ON p.id_profesor = t.id_tutor
+    WHERE t.id_tutor IS NULL;
+END $$
+
+CREATE PROCEDURE AsignarTutor(IN profesor_id INT)
+BEGIN
+    -- Verificar si el profesor existe en la tabla Profesores
+    IF EXISTS (SELECT 1 FROM Profesores WHERE id_profesor = profesor_id) THEN
+        -- Verificar si el profesor ya es tutor
+        IF NOT EXISTS (SELECT 1 FROM Tutores WHERE id_tutor = profesor_id) THEN
+            -- Insertar al profesor en la tabla Tutores
+            INSERT INTO Tutores (id_tutor) VALUES (profesor_id);
+        ELSE
+            -- Mensaje en caso de que el profesor ya sea tutor
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El profesor ya es tutor';
+        END IF;
+    ELSE
+        -- Mensaje en caso de que el profesor no exista
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El profesor no existe';
+    END IF;
+END $$
 
 DELIMITER ;
