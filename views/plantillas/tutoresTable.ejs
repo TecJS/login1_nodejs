@@ -20,8 +20,10 @@
                   <th scope="col">Correo</th>
                   <th scope="col">Teléfono</th>
                   <th scope="col">Fecha de Nacimiento</th>
-                  <th scope="col">Sexo</th>
-                  <th scope="col">Acciones</th>
+                  <th scope="col">Sexo</th>                
+                <% if (sitio==1) { %> 
+                    <th scope="col">Acciones</th>                    
+                <% } %>
                   <!-- Agregar más columnas según los datos adicionales -->
                   <!-- Por ejemplo: <th scope="col">Dirección</th> -->
               </tr>
@@ -37,15 +39,12 @@
                       <td><%= tutor.sexo %></td>
                       <!-- Agregar más celdas según los datos adicionales -->
                       <!-- Por ejemplo: <td><%= tutor.direccion %></td> -->
-                      <td>
+                      
                         <% if (sitio==1) { %> 
+                            <td>
                             <a href="/tutorCreate/<%= tutor.id_profesor %>" class="btn btn-outline-info">Dar rol</a>
-                            
-                        <%} else { %>
-                            <a href="/borrar/<%= tutor.id_tutor %>" class="btn btn-outline-info">Borrar</a>
+                            </td>           
                         <% } %>
-
-                    </td>
                   </tr>
                   
               <% }); %>
